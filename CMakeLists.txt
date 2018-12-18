@@ -7,7 +7,7 @@ add_definitions(-std=c++11)
 set(CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
-set(sources src/main.cpp src/tools.cpp src/FusionEKF.cpp src/kalman_filter.cpp src/tools.h src/FusionEKF.h src/kalman_filter.h)
+set(libraries src/tools.cpp src/FusionEKF.cpp src/kalman_filter.cpp src/tools.h src/FusionEKF.h src/kalman_filter.h)
 
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") 
@@ -20,7 +20,10 @@ link_directories(/usr/local/Cellar/libuv/1*/lib)
 
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") 
 
+add_library(ExtentedKF ${libraries})
 
-add_executable(ExtendedKF ${sources})
+add_executable(ExtendedKF src/main.cpp)
+target_link_libraries(ExtendedKF ExtentedKF z ssl uv uWS)
 
-target_link_libraries(ExtendedKF z ssl uv uWS)
+add_executable(ExtendedKF_test src/main_test.cpp)
+target_link_libraries(ExtendedKF_test ExtentedKF z ssl uv uWS)
