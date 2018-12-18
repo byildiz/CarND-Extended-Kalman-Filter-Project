@@ -38,7 +38,7 @@ void TestRMSE(const VectorXd &expected) {
   VectorXd calculated;
   vector<VectorXd>::iterator iter_es;
   vector<VectorXd>::iterator iter_gr;
-  for (size_t i = 0; i < estimations.size(); ++i) {
+  for (size_t i = 1; i <= estimations.size(); ++i) {
     iter_es = estimations.begin() + i;
     iter_gr = ground_truth.begin() + i;
     vector<VectorXd> sub_estimations(estimations.begin(), iter_es);
@@ -50,7 +50,7 @@ void TestRMSE(const VectorXd &expected) {
     cout << "passed" << endl;
   } else {
     cout << "expected:" << endl << expected << endl;
-    cout << "calculated:" << endl << calculated << endl;
+    cout << "actual:" << endl << calculated << endl;
     cout << "failed" << endl;
   }
   cout << endl;
@@ -66,7 +66,7 @@ void TestJacobian(const MatrixXd &expected) {
     cout << "passed" << endl;
   } else {
     cout << "expected:" << endl << expected << endl;
-    cout << "calculated:" << endl << calculated << endl;
+    cout << "actual:" << endl << calculated << endl;
     cout << "failed" << endl;
   }
   cout << endl;
@@ -90,7 +90,6 @@ void TestFusionEKF(const VectorXd &max_RMSE) {
   }
 
   VectorXd RMSE;
-  bool result = true;
   string sensor_measurement;
   while (getline(in_file, sensor_measurement)) {
     istringstream iss(sensor_measurement);
@@ -110,22 +109,17 @@ void TestFusionEKF(const VectorXd &max_RMSE) {
     estimations.push_back(estimate);
 
     RMSE = tools.CalculateRMSE(estimations, ground_truth);
-
-    if ((RMSE.array() > max_RMSE.array()).any()) {
-      cout << "exceed:" << endl << RMSE << endl;
-      result = false;
-    }
   }
 
   if (in_file.is_open()) {
     in_file.close();
   }
 
-  cout << "final:" << endl << RMSE << endl;
-  if (result) {
+  if (!(RMSE.array() > max_RMSE.array()).any()) {
     cout << "passed" << endl;
   } else {
-    cout << "max:" << endl << max_RMSE << endl;
+    cout << "expected:" << endl << RMSE << endl;
+    cout << "actual:" << endl << max_RMSE << endl;
     cout << "failed" << endl;
   }
   cout << endl;
